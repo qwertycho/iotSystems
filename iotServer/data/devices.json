@@ -1,0 +1,21 @@
+[
+    {
+        "name": "device",
+        "group": "1",
+        "sensors":[
+            "temp",
+            "humidity",
+            "pressure"
+        ]
+    },
+    {
+        "name": "device2",
+        "group": "2",
+        "sensors":[
+            "temp",
+            "humidity",
+            "pressure",
+            "light"
+        ]
+    }
+]
