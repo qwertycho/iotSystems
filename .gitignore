@@ -1,5 +1,6 @@
 testResults/
 env.xml
+env.json
 
 *.swp
 *.*~
