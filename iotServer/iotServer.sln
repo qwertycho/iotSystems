@@ -5,7 +5,12 @@ VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iotServer", "iotServer.csproj", "{71B55C9C-7F18-4C3B-A345-7C8D064EC459}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "iotServer_tests", "..\iotServer_tests\iotServer_tests.csproj", "{65B4708C-13A9-4EA7-A460-D48E0D5BB6D9}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "iotServer_tests", "..\iotServer_tests\iotServer_tests.csproj", "{65B4708C-13A9-4EA7-A460-D48E0D5BB6D9}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{F3146C49-988D-41E8-8A34-CD2398392C87}"
+	ProjectSection(SolutionItems) = preProject
+		data\env.xml = data\env.xml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

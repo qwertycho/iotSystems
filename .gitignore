@@ -1,4 +1,5 @@
 testResults/
+env.xml
 
 *.swp
 *.*~

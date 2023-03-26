@@ -26,5 +26,10 @@ namespace iotServer.Controllers
             return Json(res);
         }
 
+        public JsonResult Init(string macadres)
+        {
+            return Json(true);
+        }
+
     }
 }

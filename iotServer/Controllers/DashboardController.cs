@@ -10,6 +10,8 @@ namespace iotServer.Controllers
         private DeviceModel deviceModel = new DeviceModel();
         public IActionResult Index()
         {
+            deviceModel.dbTest2();
+
             return View();
         }
 
@@ -27,7 +29,6 @@ namespace iotServer.Controllers
             }
 
             return Json(groups);
-
         }
 
         public JsonResult Devices()
