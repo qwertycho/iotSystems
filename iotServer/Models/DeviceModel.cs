@@ -25,7 +25,6 @@ namespace iotServer.classes
 
             while (await reader.ReadAsync())
             {
-
                 List<string> sensors = await getDeviceSensors(reader.GetInt32(0));
 
                 Device device = new Device
@@ -63,7 +62,6 @@ namespace iotServer.classes
 
             while (await reader.ReadAsync())
             {
-
                 List<string> sensors = await getDeviceSensors(reader.GetInt32(0));
 
                 Device device = new Device
@@ -134,7 +132,6 @@ namespace iotServer.classes
                     color = reader.GetString(2),
                     devices = getDeviceByGroupAsync(reader.GetInt32(0)).Result
                 };
-
                 groups.Add(group);
             }
             return groups;
@@ -193,6 +190,42 @@ namespace iotServer.classes
             await insertSensors(device.Sensors, device.Uuid);
         }
 
+        public async Task<List<Device>> GetNewDevicesAsync()
+        {
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var cmd = new MySqlCommand
+            {
+                Connection = connection,
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE actief = 0",
+            };
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            List<Device> devices = new List<Device>();
+
+            while (await reader.ReadAsync())
+            {
+
+                List<string> sensors = await getDeviceSensors(reader.GetInt32(0));
+
+                Device device = new Device
+                {
+                    Id = reader.GetInt32(0),
+                    Name = reader.GetString(1),
+                    Group = reader.GetInt32(2),
+                    Uuid = reader.GetString(3),
+                    Date = reader.GetDateTime(4),
+                    Sensors = sensors
+                };
+
+                devices.Add(device);
+            }
+            return devices;
+        }
+
         private async Task<Device> GetDeviceByUuidAsync(string uuid)
         {
             var builder = EnvParser.ConnectionStringBuilder();
@@ -243,7 +276,6 @@ namespace iotServer.classes
 
                 await cmd.ExecuteNonQueryAsync();
             }
-            
         }
 
         public async Task<DeviceSetup> GetDeviceSetup(int id)
