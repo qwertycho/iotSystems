@@ -14,7 +14,7 @@ namespace iotServer.Controllers
 
         public async Task<JsonResult> Groups()
         {
-            List<DeviceModel.Group> groups = await deviceModel.GetAllGroupsAsync();
+            List<Group> groups = await deviceModel.GetAllGroupsAsync();
             return Json(groups);
         }
 

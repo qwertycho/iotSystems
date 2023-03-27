@@ -6,6 +6,7 @@ namespace iotServer.classes
 
     public class DeviceModel
     {
+        private List<NewDevice> devicesToInit = new List<NewDevice>();
         public async Task<List<Device>> getAllDevicesAsync()
         {
             var builder = EnvParser.ConnectionStringBuilder();
@@ -136,33 +137,142 @@ namespace iotServer.classes
 
                 groups.Add(group);
             }
-
-
             return groups;
         }
 
-        public class Group
+        public async Task<DeviceSetup> initDevice(NewDevice device)
         {
-            public int id { get; set; }
-            public string? name { get; set; }
-            public string? color { get; set; }
-            public List<Device>? devices { get; set; }
+            // controleren of device al bestaat
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var cmd = new MySqlCommand
+            {
+                Connection = connection,
+                CommandText = "SELECT deviceID FROM devices WHERE uuid = @uuid",
+            };
+
+            cmd.Parameters.AddWithValue("@uuid", device.Uuid);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            DeviceSetup deviceSetup = new DeviceSetup();
+
+           if(reader.HasRows)
+            {
+                while (await reader.ReadAsync())
+                {
+                    deviceSetup.id = reader.GetInt32(0);
+                }
+                return deviceSetup;
+            }
+            else
+            {
+                await insertDevice(device);
+                return deviceSetup;
+            }
         }
 
-        public class SensorValue
+        private async Task insertDevice(NewDevice device)
         {
-            public int id { get; set; }
-            public int value { get; set; }
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var cmd = new MySqlCommand
+            {
+                Connection = connection,
+                CommandText = "INSERT INTO devices (uuid, actief) VALUES (@uuid, 0)",
+            };
+
+            cmd.Parameters.AddWithValue("@uuid", device.Uuid);
+
+            await cmd.ExecuteNonQueryAsync();
+
+            await insertSensors(device.Sensors, device.Uuid);
         }
 
-        public class Device
+        private async Task<Device> GetDeviceByUuidAsync(string uuid)
         {
-            public int Id { get; set; }
-            public string? Name { get; set; }
-            public int? Group { get; set; }
-            public string? Uuid { get; set; }
-            public DateTime Date { get; set; }
-            public List<string>? Sensors { get; set; }
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var cmd = new MySqlCommand
+            {
+                Connection = connection,
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE uuid = @uuid",
+            };
+
+            cmd.Parameters.AddWithValue("@uuid", uuid);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            Device device = new Device();
+
+            while (await reader.ReadAsync())
+            {
+                device.Id = reader.GetInt32(0);
+                device.Name = reader.GetString(1);
+                device.Group = reader.GetInt32(2);
+                device.Uuid = reader.GetString(3);
+                device.Date = reader.GetDateTime(4);
+            }
+            return device;
+        }
+
+        private async Task insertSensors(List<string> sensors, string uuid)
+        {
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            Device device = await GetDeviceByUuidAsync(uuid);
+
+            foreach (string sensor in sensors)
+            {
+                using var cmd = new MySqlCommand
+                {
+                    Connection = connection,
+                    CommandText = "INSERT INTO sensors (sensorName, deviceID) VALUES (@name, @deviceID)",
+                };
+
+                cmd.Parameters.AddWithValue("@name", sensor);
+                cmd.Parameters.AddWithValue("@deviceID", device.Id);
+
+                await cmd.ExecuteNonQueryAsync();
+            }
+            
+        }
+
+        public async Task<DeviceSetup> GetDeviceSetup(int id)
+        {
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var cmd = new MySqlCommand
+            {
+                Connection = connection,
+                CommandText = "SELECT deviceID, maxTemp, minTemp, aanTijd, uitTijd FROM devices INNER JOIN setup ON devices.setupID = setup.setupID WHERE deviceID = @id",
+            };
+
+            cmd.Parameters.AddWithValue("@id", id);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            DeviceSetup deviceSetup = new DeviceSetup();
+
+            while (await reader.ReadAsync())
+            {
+                deviceSetup.id = reader.GetInt32(0);
+                deviceSetup.maxTemp = reader.GetFloat(1);
+                deviceSetup.minTemp = reader.GetFloat(2);
+                deviceSetup.aanTijd = reader.GetInt32(3);
+                deviceSetup.uitTijd = reader.GetInt32(4);
+            }
+            return deviceSetup;
         }
     }
 }

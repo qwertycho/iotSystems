@@ -15,13 +15,28 @@ namespace iotServer.Controllers
         }
 
         public JsonResult GetDevices()
-        {           
+        {
             return Json(deviceModel.getAllDevicesAsync().Result);
         }
 
-        public JsonResult Init(string macadres)
+        public async Task<JsonResult> Init([FromBody] NewDevice device)
         {
-            return Json(true);
+            try
+            {
+                if (device.Uuid != null || device.Sensors != null)
+                {
+                    await deviceModel.initDevice(device);
+                    return Json(true);
+                }
+                else
+                {
+                    throw new Exception("Invalid device");
+                }
+            }
+            catch (Exception e)
+            {
+                return Json(false);
+            }
         }
 
     }
