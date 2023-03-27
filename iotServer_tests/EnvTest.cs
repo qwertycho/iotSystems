@@ -10,14 +10,13 @@ namespace iotServer_tests
         [TestMethod]
         public void TestGetDBSettingsType()
         {
-           dbSettings settings = new EnvParser().getDbSettings();
-            Assert.IsInstanceOfType(settings, typeof(dbSettings));
+            Assert.IsInstanceOfType(EnvParser.getDbSettings(), typeof(dbSettings));
         }
 
         [TestMethod]
         public void TestGetDBSettings()
         {
-           dbSettings settings = new EnvParser().getDbSettings();
+           dbSettings settings = EnvParser.getDbSettings();
             Assert.IsNotNull(settings.database);
             Assert.IsNotNull(settings.password);
             Assert.IsNotNull(settings.server);

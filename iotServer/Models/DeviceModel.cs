@@ -5,17 +5,9 @@ namespace iotServer.classes{
 
     public class DeviceModel
     {
-        public async void dbTest2()
+        public async  Task<List<Device>> getAllDevicesAsync()
         {
-           dbSettings settings = new EnvParser().getDbSettings();
-
-            var builder = new MySqlConnectionStringBuilder
-            {
-                Server = settings.server,
-                UserID = settings.user,
-                Password = settings.password,
-                Database = settings.database,
-            };
+           var builder = EnvParser.ConnectionStringBuilder();
 
             using var connection = new MySqlConnection(builder.ConnectionString);
             await connection.OpenAsync();
@@ -23,26 +15,57 @@ namespace iotServer.classes{
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "SELECT * FROM devices",
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE actief = 1",
             };
 
             using var reader = await cmd.ExecuteReaderAsync();
 
+            List<Device> devices = new List<Device>();
+
             while (await reader.ReadAsync())
             {
-                Console.WriteLine(reader.GetInt16(0));
-                Console.WriteLine(reader.GetString(2));
+
+                List<string> sensors = await getDeviceSensors(reader.GetInt32(0));
+
+                Device device = new Device{
+                    Id = reader.GetInt32(0),
+                    Name = reader.GetString(1),
+                    Group = reader.GetInt32(2),
+                    Uuid = reader.GetString(3),
+                    Date = reader.GetDateTime(4),
+                    Sensors = sensors
+                };
+
+                devices.Add(device);
             }
+            return devices;
         }
 
-        public List<Device> getAllDevices(){
-            List<Device>? devices = new List<Device>();
+        private async Task<List<string>> getDeviceSensors(int id)
+        {
+            var builder = EnvParser.ConnectionStringBuilder();
 
-            string file = System.IO.File.ReadAllText("data/devices.json");
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
 
-            devices = JsonConvert.DeserializeObject<List<Device>>(file);
+            using var cmd = new MySqlCommand
+            {
+                Connection = connection,
+                CommandText = "SELECT sensorName FROM sensors WHERE deviceID = @id",
+            };
 
-            return devices;
+            cmd.Parameters.AddWithValue("@id", id);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            List<string> sensors = new List<string>();
+
+            while (await reader.ReadAsync())
+            {
+                sensors.Add(reader.GetString(0));
+            }
+
+            return sensors;
         }
 
         public SensorValue getDeviceValue(int id){
@@ -68,7 +91,9 @@ namespace iotServer.classes{
         {
             public int Id { get; set; }
             public string? Name { get; set; }
-            public string? Group { get; set; }
+            public int? Group { get; set; }
+            public string Uuid { get; set; }
+            public DateTime Date { get; set; }
             public List<string>? Sensors { get; set; }
         }
     }

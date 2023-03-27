@@ -16,7 +16,7 @@ namespace iotServer.Controllers
 
         public JsonResult GetDevices()
         {           
-            return Json(deviceModel.getAllDevices());
+            return Json(deviceModel.getAllDevicesAsync().Result);
         }
 
         public JsonResult getDeviceValue(int id){

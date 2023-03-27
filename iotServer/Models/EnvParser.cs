@@ -1,6 +1,6 @@
 using Newtonsoft.Json;
+using MySqlConnector;
 
-using System.Xml;
 namespace iotServer.classes
 {
 
@@ -26,13 +26,29 @@ namespace iotServer.classes
         /// Returns the dbSettings object with the values from the env.xml file
         /// </summary>
         /// <returns>dbSettings</returns>
-        public dbSettings getDbSettings()
+        public static dbSettings getDbSettings()
         {
             string file = System.IO.File.ReadAllText("data/env.json");
             // convert the dbsettings json to a dbsettings object
             EnvSettings? settings = JsonConvert.DeserializeObject<EnvSettings>(file);
             return settings.dbSettings;
         }
+
+        public static MySqlConnectionStringBuilder ConnectionStringBuilder()
+        {
+            dbSettings settings = getDbSettings();
+
+            var builder = new MySqlConnectionStringBuilder
+            {
+                Server = settings.server,
+                UserID = settings.user,
+                Password = settings.password,
+                Database = settings.database,
+            };
+
+            return builder;
+        }
+
     }
 
 }
