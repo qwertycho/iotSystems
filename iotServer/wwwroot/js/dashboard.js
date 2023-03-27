@@ -10,6 +10,12 @@ fetch("/dashboard/groups")
 }) 
 }
 
+/**
+ * 
+ * @param {*} group json array
+ * Loops through all the groups and calls buildGroup for each group.
+ * Clears the groups div and appends the new groups.
+ */
 function buildDisplay(data){
   document.querySelector(".groups").innerHTML = "";
     data.forEach(group => {
@@ -41,10 +47,17 @@ function buildSensor(sensors){
     return div;
 }
 
+/**
+ * 
+ * @param {group} group
+ * @returns group div
+ * Builds a group div that contains all the devices in the group.
+ * Loops through all the devices in the group and calls buildDevice for each device.
+ */
 function buildGroup(group){
     let div = document.createElement("div");
     let groupTitle = document.createElement("h2");
-    groupTitle.innerText =`Groep: ${group.groupName}`;
+    groupTitle.innerText =`Groep: ${group.name}`;
     div.appendChild(groupTitle);
     group.devices.forEach(device => {
       div.appendChild(buildDevice(device));

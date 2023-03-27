@@ -17,7 +17,6 @@ namespace iotServer.classes
     /// </summary>
     public class EnvParser
     {
-
         private class EnvSettings
         {
             public dbSettings? dbSettings { get; set; }
@@ -34,6 +33,10 @@ namespace iotServer.classes
             return settings.dbSettings;
         }
 
+        /// <summary>
+        /// Returns a MySqlConnectionStringBuilder object with the values from the EnvParser class
+        /// </summary>
+        /// <returns>MySqlConnectionStringBuilder</returns>
         public static MySqlConnectionStringBuilder ConnectionStringBuilder()
         {
             dbSettings settings = getDbSettings();
@@ -48,7 +51,5 @@ namespace iotServer.classes
 
             return builder;
         }
-
     }
-
 }

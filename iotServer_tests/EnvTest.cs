@@ -1,6 +1,7 @@
 using iotServer.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using iotServer.classes;
+using MySqlConnector;
 
 namespace iotServer_tests
 {
@@ -21,6 +22,16 @@ namespace iotServer_tests
             Assert.IsNotNull(settings.password);
             Assert.IsNotNull(settings.server);
             Assert.IsNotNull(settings.user);
+        }
+
+        [TestMethod]
+        public void TestConnectionStringBuilder()
+        {
+            Assert.IsInstanceOfType(EnvParser.ConnectionStringBuilder(), typeof(MySqlConnectionStringBuilder));
+            Assert.IsNotNull(EnvParser.ConnectionStringBuilder().Database);
+            Assert.IsNotNull(EnvParser.ConnectionStringBuilder().Password);
+            Assert.IsNotNull(EnvParser.ConnectionStringBuilder().Server);
+            Assert.IsNotNull(EnvParser.ConnectionStringBuilder().UserID);
         }
     }
 }

@@ -19,13 +19,6 @@ namespace iotServer.Controllers
             return Json(deviceModel.getAllDevicesAsync().Result);
         }
 
-        public JsonResult getDeviceValue(int id){
-
-            DeviceModel.SensorValue res = deviceModel.getDeviceValue(id);
-
-            return Json(res);
-        }
-
         public JsonResult Init(string macadres)
         {
             return Json(true);
