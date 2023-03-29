@@ -1,39 +1,42 @@
-import machine
 import time
-import math
 
-adc = machine.ADC(0)
+# importeer de classes
+import tempSens
+import waterSens
+import relais
+import wifi
 
-def getTemparature(r, Ro=10000.0, To=25.0, beta=3950.0, samples=20):
-    '''
-    Krijg de temperatuur van een thermistor
-    r: de weerstand van de thermistor
-    Ro: de weerstand van de thermistor bij 25 graden
-    To: de temperatuur van de thermistor bij 25 graden
-    beta: de beta waarde van de thermistor
-    samples: het aantal samples dat gemiddeld moet worden
-    '''
-    avarage = 0
-    sensort_offset = 6.5
-    for i in range(samples):
-        steinhart = math.log(r / Ro) / beta      # log(R/Ro) / beta
-        steinhart += 1.0 / (To + 273.15)         # log(R/Ro) / beta + 1/To
-        steinhart = (1.0 / steinhart) - 273.15   # Invert, convert to C
-        avarage += steinhart - sensort_offset
-        time.sleep(0.01)
-    return avarage / samples
+#global variables
+SLEEP_TIME = 0.5
 
-min = 999
-max = 0
+# maak een object van de classes
+water = waterSens.WaterSensor()
+sensor = tempSens.TempSensor()
+relais = relais.Relais(1, 3)
+wifi = wifi.Wifi()
 
+# subscribe aan de events
+def waterLow(value):
+    relais.setRelais(0, 1)
+                     
+def waterHigh(value):
+    relais.setRelais(0, 0)
+
+def tempHigh(value):
+    relais.setRelais(0, 1)
+
+def tempLow(value):
+    relais.setRelais(0, 0)
+
+
+water.subsribe("waterLow", waterLow)
+water.subsribe("waterHigh", waterHigh)
+
+sensor.subsribe("tempHigh", tempHigh)
+sensor.subsribe("tempLow", tempLow)
 
 while True:
-    R = 10000 / (65535/adc.read_u16() - 1)
-    print("current: ", getTemparature(R))
-    if max < getTemparature(R):
-        max = getTemparature(R)
-    if min > getTemparature(R):
-        min = getTemparature(R)
-    print("max: ", max)
-    print("min: ", min)
-    time.sleep(1)
+    print("temparatuur: " , sensor.getTemparature())
+    print("water is vol: " , water.getWaterLevel())
+    print(wifi.makeRequest())
+    time.sleep(SLEEP_TIME)
