@@ -1,0 +1,8 @@
+{
+    "dbSettings":{
+        "server": "123456789",
+        "database": "database",
+        "user": "user",
+        "password": "password"
+    }
+}

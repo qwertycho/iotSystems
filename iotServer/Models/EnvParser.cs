@@ -22,12 +22,20 @@ namespace iotServer.classes
             public dbSettings? dbSettings { get; set; }
         }
         /// <summary>
-        /// Returns the dbSettings object with the values from the env.xml file
+        /// Returns the dbSettings object with the values from the env.json file
         /// </summary>
         /// <returns>dbSettings</returns>
         public static dbSettings getDbSettings()
         {
-            string file = System.IO.File.ReadAllText("data/env.json");
+            string file;
+            // checks if the env.json file exists, if not it uses the testEnv.json file
+            if(!System.IO.File.Exists("data/env.json"))
+            {
+                file = System.IO.File.ReadAllText("data/testEnv.json");
+            } else
+            {
+                file = System.IO.File.ReadAllText("data/env.json");
+            }
             // convert the dbsettings json to a dbsettings object
             EnvSettings? settings = JsonConvert.DeserializeObject<EnvSettings>(file);
             return settings.dbSettings;
