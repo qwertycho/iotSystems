@@ -16,7 +16,7 @@ namespace iotServer.classes
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE actief = 1",
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE status = A",
             };
 
             using var reader = await cmd.ExecuteReaderAsync();
@@ -51,7 +51,7 @@ namespace iotServer.classes
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE actief = 1 AND groepID = @groupID",
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE status = 1 AND groepID = @groupID",
             };
 
             cmd.Parameters.AddWithValue("@groupID", groupID);
@@ -180,7 +180,7 @@ namespace iotServer.classes
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "INSERT INTO devices (uuid, actief) VALUES (@uuid, 0)",
+                CommandText = "INSERT INTO devices (uuid, status) VALUES (@uuid, N)",
             };
 
             cmd.Parameters.AddWithValue("@uuid", device.Uuid);
@@ -199,7 +199,7 @@ namespace iotServer.classes
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE actief = 0",
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE status = A",
             };
 
             using var reader = await cmd.ExecuteReaderAsync();

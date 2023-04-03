@@ -19,6 +19,11 @@ namespace iotServer.Controllers
             return Json(deviceModel.getAllDevicesAsync().Result);
         }
 
+/// <summary>
+/// Deze knaap wordt aangeroepen als een nieuwe device zich aanmeldt
+/// De functie krijgt een uuid (mac adres) en een lijst met sensoren mee
+/// Daarvoor is de [FromBody] nodig
+/// </summary>
         public async Task<JsonResult> Init([FromBody] NewDevice device)
         {
             try
@@ -35,6 +40,7 @@ namespace iotServer.Controllers
             }
             catch (Exception e)
             {
+                Console.WriteLine(e);
                 return Json(false);
             }
         }
