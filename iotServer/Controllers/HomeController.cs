@@ -15,6 +15,7 @@ namespace iotServer.Controllers
 
         public IActionResult Index()
         {
+            _logger.LogInformation("Index page says hello");
             return View();
         }
 

@@ -2,17 +2,24 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using iotServer.classes;
 
+// loggen
+// using Microsoft.Extensions.Logging;
+
 namespace iotServer.Controllers
 {
     public class DeviceController : Controller
     {
 
-        private DeviceModel deviceModel = new DeviceModel();
+        private readonly ILogger<DeviceController> _logger;
 
-        public IActionResult Index()
+        private DeviceModel deviceModel;
+
+        public DeviceController(ILogger<DeviceController> logger)
         {
-            return View();
+            _logger = logger;
+            deviceModel = new DeviceModel();
         }
+
 
         public JsonResult GetDevices()
         {
@@ -35,12 +42,13 @@ namespace iotServer.Controllers
                 }
                 else
                 {
-                    throw new Exception("Invalid device");
+                    _logger.LogError("Device Init failed, uuid or sensors is null");
+                    return Json(false);
                 }
             }
             catch (Exception e)
             {
-                Console.WriteLine(e);
+                _logger.LogError(e, "Error in Init");
                 return Json(false);
             }
         }
@@ -49,7 +57,7 @@ namespace iotServer.Controllers
         /// Haalt een list van nieuwe devices op uit de database
         /// </summary>
         public async Task<JsonResult> GetNewDevices()
-        {
+        {            
             try
             {
                 return Json(await deviceModel.GetNewDevicesAsync());

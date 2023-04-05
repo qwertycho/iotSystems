@@ -192,7 +192,6 @@ namespace iotServer.classes
 
         public async Task<List<Device>> GetNewDevicesAsync()
         {
-            Console.WriteLine("GetNewDevicesAsync");
             var builder = EnvParser.ConnectionStringBuilder();
             using var connection = new MySqlConnection(builder.ConnectionString);
             await connection.OpenAsync();
@@ -209,7 +208,6 @@ namespace iotServer.classes
 
             while (await reader.ReadAsync())
             {
-
                 List<string> sensors = await getDeviceSensors(reader.GetInt32(0));
 
                 Device device = new Device

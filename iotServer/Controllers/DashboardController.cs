@@ -7,7 +7,15 @@ namespace iotServer.Controllers
 {
     public class DashboardController : Controller
     {
-        private DeviceModel deviceModel = new DeviceModel();
+
+        private readonly ILogger<DashboardController> _logger;
+        private DeviceModel deviceModel;
+
+        public DashboardController(ILogger<DashboardController> logger)
+        {
+            _logger = logger;
+            deviceModel = new DeviceModel();
+        }
         public IActionResult Index()
         {
             return View();
@@ -15,32 +23,42 @@ namespace iotServer.Controllers
 
         public async Task<JsonResult> Groups()
         {
-            Stopwatch   stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            List<Group> groups = await deviceModel.GetAllGroupsAsync();
-
-            stopwatch.Stop();
-            Console.WriteLine("Time elapsed for Groups: {0}", stopwatch.Elapsed);
-            
-            return Json(groups);
+            try
+            {
+                List<Group> groups = await deviceModel.GetAllGroupsAsync();
+                return Json(groups);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in Groups");
+                return Json(new List<Group>());
+            }
         }
 
         public JsonResult Devices()
-        {           
-            return Json(deviceModel.getAllDevicesAsync().Result);
+        {
+            try
+            {
+                return Json(deviceModel.getAllDevicesAsync().Result);
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in Devices");
+                return Json(new List<Device>());
+            }
         }
 
         public async Task<JsonResult> NewDevices()
         {
-            Stopwatch stopwatch = new Stopwatch();
-            stopwatch.Start();
-
-            List<Device> devices = await deviceModel.GetNewDevicesAsync();
-            stopwatch.Stop();
-            Console.WriteLine("Time elapsed for NewDevices: {0}", stopwatch.Elapsed);
-
-            return Json(devices);
+            try
+            {
+                return Json(await deviceModel.GetNewDevicesAsync());
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in NewDevices");
+                return Json(new List<Device>());
+            }
         }
     }
 }
