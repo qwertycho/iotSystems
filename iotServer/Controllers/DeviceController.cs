@@ -9,7 +9,6 @@ namespace iotServer.Controllers
 {
     public class DeviceController : Controller
     {
-
         private readonly ILogger<DeviceController> _logger;
 
         private DeviceModel deviceModel;
@@ -20,10 +19,33 @@ namespace iotServer.Controllers
             deviceModel = new DeviceModel();
         }
 
-
         public JsonResult GetDevices()
         {
             return Json(deviceModel.getAllDevicesAsync().Result);
+        }
+
+        public async Task<IActionResult> details()
+        {
+            try
+            {
+                int id = Convert.ToInt32(Request.Query["id"]);
+                Device device = await deviceModel.GetDeviceByID(id);
+
+
+                ViewBag.deviceName = device.Name;
+                ViewBag.deviceID = device.Id;
+                ViewBag.deviceUUID = device.Uuid;
+                ViewBag.deviceSensors = device.Sensors;
+                ViewBag.deviceGroup = device.Group;
+                ViewBag.deviceDate = device.Date;
+                
+                return View();
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e, "Error in details");
+                return View();
+            }
         }
 
         /// <summary>
@@ -57,7 +79,7 @@ namespace iotServer.Controllers
         /// Haalt een list van nieuwe devices op uit de database
         /// </summary>
         public async Task<JsonResult> GetNewDevices()
-        {            
+        {
             try
             {
                 return Json(await deviceModel.GetNewDevicesAsync());

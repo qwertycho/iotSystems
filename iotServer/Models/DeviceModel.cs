@@ -78,6 +78,40 @@ namespace iotServer.classes
             return devices;
         }
 
+        public async Task<Device> GetDeviceByID(int id)
+        {
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var cmd = new MySqlCommand
+            {
+                Connection = connection,
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE deviceID = @id",
+            };
+
+            cmd.Parameters.AddWithValue("@id", id);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            Device device = new Device();
+
+            while (await reader.ReadAsync())
+            {
+                List<string> sensors = await getDeviceSensors(reader.GetInt32(0));
+
+                device.Id = reader.GetInt32(0);
+                device.Name = reader.GetString(1);
+                device.Group = reader.GetInt32(2);
+                device.Uuid = reader.GetString(3);
+                device.Date = reader.GetDateTime(4);
+                device.Sensors = sensors;
+            }
+
+            return device;
+        }
+
+
         private async Task<List<string>> getDeviceSensors(int id)
         {
             var builder = EnvParser.ConnectionStringBuilder();

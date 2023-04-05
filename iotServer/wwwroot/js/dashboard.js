@@ -35,6 +35,12 @@ function buildDisplay(data) {
 
 function buildDevice(device) {
   let div = document.createElement("div");
+  div.classList.add('border', 'border-dark', 'p-2', 'm-2', `device-${device.id}`, 'device', 'col-12', 'col-md-6', 'col-lg-4', 'col-xl-3');
+
+  div.addEventListener("click", () => {
+    window.location.href = `/device/details?id=${device.id}`;
+  });
+
   let deviceTitle = document.createElement("h3");
   deviceTitle.innerText = device.name;
   div.appendChild(deviceTitle);
@@ -65,6 +71,7 @@ function buildSensor(sensors) {
  */
 function buildGroup(group) {
   let div = document.createElement("div");
+  div.classList.add("group", "border", "border-dark", "p-2", "m-2");
   let groupTitle = document.createElement("h2");
   groupTitle.innerText = `Groep: ${group.name}`;
   div.appendChild(groupTitle);
@@ -78,10 +85,17 @@ function buildGroup(group) {
 
 function buildNewDevice(device) {
   let div = document.createElement("div");
-  div.classList.add("border", "border-dark", "p-2", "m-2", `device-${device.id}`, "newDevice");
-  
+  div.classList.add(
+    "border",
+    "border-dark",
+    "p-2",
+    "m-2",
+    `device-${device.id}`,
+    "device"
+  );
+
   div.addEventListener("click", () => {
-    window.location.href = `/device/details/${device.id}`;
+    window.location.href = `/device/details?id=${device.id}`;
   });
 
   let deviceTitle = document.createElement("h3");
