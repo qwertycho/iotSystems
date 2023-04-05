@@ -16,3 +16,8 @@ html {
 body {
   margin-bottom: 60px;
 }
+
+.newDevice:hover {
+  background-color: #f5f5f5;
+  cursor: pointer;
+}

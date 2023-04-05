@@ -156,7 +156,7 @@ namespace iotServer.classes
 
             DeviceSetup deviceSetup = new DeviceSetup();
 
-           if(reader.HasRows)
+            if (reader.HasRows)
             {
                 while (await reader.ReadAsync())
                 {
@@ -180,7 +180,7 @@ namespace iotServer.classes
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "INSERT INTO devices (uuid, status) VALUES (@uuid, N)",
+                CommandText = "INSERT INTO devices (uuid, status) VALUES (@uuid, 'N')",
             };
 
             cmd.Parameters.AddWithValue("@uuid", device.Uuid);
@@ -192,6 +192,7 @@ namespace iotServer.classes
 
         public async Task<List<Device>> GetNewDevicesAsync()
         {
+            Console.WriteLine("GetNewDevicesAsync");
             var builder = EnvParser.ConnectionStringBuilder();
             using var connection = new MySqlConnection(builder.ConnectionString);
             await connection.OpenAsync();
@@ -199,7 +200,7 @@ namespace iotServer.classes
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE status = 'A'",
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE status = 'N'",
             };
 
             using var reader = await cmd.ExecuteReaderAsync();
