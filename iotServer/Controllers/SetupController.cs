@@ -22,6 +22,7 @@ namespace iotServer.Controllers
             DeviceSetup setup = await setupModel.GetDeviceSetupAsync(id);
 
             ViewData["id"] = setup.id;
+            ViewData["deviceID"] = setup.deviceID;
             ViewData["aanTijd"] = setup.aanTijd;
             ViewData["uitTijd"] = setup.uitTijd;
             ViewData["maxTemp"] = setup.maxTemp;
@@ -32,23 +33,9 @@ namespace iotServer.Controllers
 
         public async Task<IActionResult> Save()
         {
-
-            var form = HttpContext.Request.Form;
-
-            DeviceSetup setup = new DeviceSetup();
             try
             {
-                setup.id = Convert.ToInt32(form["id"]);
-                setup.aanTijd = Convert.ToInt32(form["aanTijd"]);
-                setup.uitTijd = Convert.ToInt32(form["uitTijd"]);
-                setup.maxTemp = float.Parse(form["maxTemp"]);
-                setup.minTemp = float.Parse(form["minTemp"]);
-
-                Console.WriteLine(setup.id);
-                Console.WriteLine(setup.aanTijd);
-                Console.WriteLine(setup.uitTijd);
-                Console.WriteLine(setup.maxTemp);
-                Console.WriteLine(setup.minTemp);
+                DeviceSetup setup = setupModel.generateSetupFromForm(Request.Form);
 
                 await setupModel.SaveSetupAsync(setup);
 
@@ -59,9 +46,7 @@ namespace iotServer.Controllers
                 // return View();
             }
 
-
-
-            return Redirect($"Index?id={form["id"]}");
+            return Redirect($"Index?id={Request.Form["deviceID"]}");
         }
 
         public async Task<JsonResult> GetSetup()

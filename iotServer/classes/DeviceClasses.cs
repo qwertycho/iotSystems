@@ -10,6 +10,7 @@ namespace iotServer.classes
     public class DeviceSetup
     {
         public int id { get; set; }
+        public int deviceID { get; set; }
         public float maxTemp { get; set; }
         public float minTemp { get; set; }
         public int aanTijd { get; set; }

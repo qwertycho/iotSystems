@@ -13,6 +13,7 @@
         @Html.AntiForgeryToken()
 
         <input type="hidden" name="id" value="@ViewData["id"]" />
+        <input type="hidden" name="deviceID" value="@ViewData["deviceID"]" />
         <input type="number" name="maxTemp" value="@ViewData["maxTemp"]" />
         <input type="number" name="minTemp" value="@ViewData["minTemp"]" />
         <input type="number" name="aanTijd" value="@ViewData["aanTijd"]" />

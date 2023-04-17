@@ -12,6 +12,46 @@ namespace iotServer.classes
             builder = EnvParser.ConnectionStringBuilder();
         }
 
+        /// <summary>
+        /// Maakt een setup object aan
+        /// </summary>
+        /// <param name="setup">
+        /// IFomCollection (Ruest.Form)
+        ///</param>
+        /// <returns>
+        /// DeviceSetup
+        ///</returns>
+        /// <exception cref="Exception">
+        /// DeviceID is 0
+        ///</exception>
+        public DeviceSetup generateSetupFromForm(
+            IFormCollection form
+        )
+        {
+            DeviceSetup setup = new DeviceSetup();
+            setup.id = Convert.ToInt32(form["id"]);
+            setup.deviceID = Convert.ToInt32(form["deviceID"]);
+
+            if (setup.deviceID == 0)
+            {
+                throw new Exception("DeviceID is 0");
+            }
+
+            setup.aanTijd = Convert.ToInt32(form["aanTijd"]);
+            setup.uitTijd = Convert.ToInt32(form["uitTijd"]);
+
+            String maxTemp = form["maxTemp"];
+            String minTemp = form["minTemp"];
+
+            maxTemp = maxTemp.Replace(",", ".");
+            minTemp = minTemp.Replace(",", ".");
+
+            setup.maxTemp = Convert.ToSingle(maxTemp);
+            setup.minTemp = Convert.ToSingle(minTemp);
+
+            return setup;
+        }
+
         public async Task<DeviceSetup> GetDeviceSetupAsync(int id)
         {
             using var connection = new MySqlConnection(builder.ConnectionString);
@@ -23,6 +63,7 @@ namespace iotServer.classes
             using var reader = await command.ExecuteReaderAsync();
 
             DeviceSetup setup = new DeviceSetup();
+            setup.deviceID = id;
 
 
             if (!reader.HasRows)
@@ -82,21 +123,21 @@ namespace iotServer.classes
             return setups;
         }
 
-// updaten zodat id van device word gebruikt met een inner join
         public async Task SaveSetupAsync(DeviceSetup setup)
         {
             using var connection = new MySqlConnection(builder.ConnectionString);
             await connection.OpenAsync();
 
             using var command = new MySqlCommand(@"
-            IF NOT EXISTS (SELECT * FROM setup WHERE setupID = @id) 
+            IF NOT EXISTS (SELECT setupID FROM devices INNER JOIN setup ON devices.setup = setup.setupID WHERE devices.deviceID = @DEVICEID)
             THEN
                 INSERT INTO setup (aanTijd, uitTijd, maxTemp, minTemp)
                 VALUES (@aanTijd, @uitTijd, @maxTemp, @minTemp);
 
                 UPDATE devices
-                SET setup = 1
-                WHERE deviceID = @id;
+                SET setup = LAST_INSERT_ID()
+                WHERE deviceID = @DEVICEID;
+           
 
             ELSE
                 UPDATE setup
@@ -113,6 +154,7 @@ namespace iotServer.classes
             command.Parameters.AddWithValue("@uitTijd", setup.uitTijd);
             command.Parameters.AddWithValue("@maxTemp", setup.maxTemp);
             command.Parameters.AddWithValue("@minTemp", setup.minTemp);
+            command.Parameters.AddWithValue("@DEVICEID", setup.deviceID);
 
             await command.ExecuteNonQueryAsync();
 
