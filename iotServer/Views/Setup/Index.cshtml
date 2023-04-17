@@ -5,4 +5,19 @@
 <div class="text-center">
     <h1 class="display-4">Setup</h1>
     <p>Hier staan de verschillende instellingen.</p>
+
+    <p>SetupID: @ViewData["id"]</p>
+
+    <form method="POST" action="/Setup/Save">
+
+        @Html.AntiForgeryToken()
+
+        <input type="hidden" name="id" value="@ViewData["id"]" />
+        <input type="number" name="maxTemp" value="@ViewData["maxTemp"]" />
+        <input type="number" name="minTemp" value="@ViewData["minTemp"]" />
+        <input type="number" name="aanTijd" value="@ViewData["aanTijd"]" />
+        <input type="number" name="uitTijd" value="@ViewData["uitTijd"]" />
+        <input type="submit" value="Opslaan" />
+    </form>
+
 </div>
