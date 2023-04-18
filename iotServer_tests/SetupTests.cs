@@ -10,6 +10,15 @@ namespace iotServer_tests
     [TestClass]
     public class SetupTests
     {
+
+        [TestInitialize]
+        public void TestInitialize()
+        {
+            // Zorgt ervoor dat de decimal separator een punt is
+            System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            System.Globalization.CultureInfo.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+        }
+
         [TestMethod]
         public void TestGenerateSetupFromForm()
         {

@@ -5,6 +5,10 @@ namespace iotServer
         public static void Main(string[] args)
         {
 
+// Zorgt ervoor dat de decimal separator een punt is
+            System.Globalization.CultureInfo.CurrentCulture = System.Globalization.CultureInfo.InvariantCulture;
+            System.Globalization.CultureInfo.CurrentUICulture = System.Globalization.CultureInfo.InvariantCulture;
+
         var builder = WebApplication.CreateBuilder(args);
 
         // Add services to the container.
