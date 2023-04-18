@@ -21,8 +21,8 @@ namespace iotServer_tests
                 {"deviceID", "1"},
                 {"aanTijd", "0600"},
                 {"uitTijd", "2200"},
-                {"maxTemp", "26.7"},
-                {"minTemp", "18,3"}
+                {"maxTemp", "26,7"},
+                {"minTemp", "18.3"}
             });
 
             DeviceSetup setup = setupModel.generateSetupFromForm(form);
