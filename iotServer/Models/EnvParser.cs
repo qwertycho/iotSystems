@@ -16,12 +16,11 @@ namespace iotServer.classes
     /// </summary>
     public class EnvParser
     {
-        private readonly static ILogger<EnvParser> _logger = LoggerFactory.Create(builder => builder.AddConsole()).CreateLogger<EnvParser>();
-
         private class EnvSettings
         {
             public dbSettings? dbSettings { get; set; }
         }
+        
         /// <summary>
         /// Returns the dbSettings object with the values from the env.json file.
         /// </summary>
@@ -33,12 +32,10 @@ namespace iotServer.classes
             // checks if the env.json file exists, if not it uses the testEnv.json file
             if (!System.IO.File.Exists("data/env.json"))
             {
-                _logger.LogWarning("env.json bestand niet gevonden, gebruik testEnv.json voor testen");
                 file = System.IO.File.ReadAllText("data/testEnv.json");
             }
             else
             {
-                _logger.LogInformation("env.json bestand gevonden");
                 file = System.IO.File.ReadAllText("data/env.json");
             }
             // convert the dbsettings json to a dbsettings object
@@ -47,7 +44,6 @@ namespace iotServer.classes
             // Controleren of de setting niet null zijn zodat de compiler zijn mond houd.
             if (settings?.dbSettings == null)
             {
-                _logger.LogError("DbSettings is null tijdens het ophalen van de gegevens");
                 throw new System.Exception("DbSettings is null tijdens het ophalen van de gegevens");
             }
 

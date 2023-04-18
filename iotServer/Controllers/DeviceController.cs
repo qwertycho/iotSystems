@@ -31,7 +31,7 @@ namespace iotServer.Controllers
                 int id = Convert.ToInt32(Request.Query["id"]);
                 Device device = await deviceModel.GetDeviceByID(id);
 
-
+// dit wat mooier maken met een viewmodel en een foreach
                 ViewBag.deviceName = device.Name;
                 ViewBag.deviceID = device.Id;
                 ViewBag.deviceUUID = device.Uuid;
@@ -59,18 +59,13 @@ namespace iotServer.Controllers
         {
             try
             {
-                if (device.Uuid != null || device.Sensors != null)
-                {
-                    if(await deviceModel.initDevice(device))
-                    {
-                        return Json(true);
-                    }
+                deviceModel.validateNewDevice(device);
 
-                    return Json(false);
-                } else
+                if(await deviceModel.initDevice(device))
                 {
-                    throw new Exception("No uuid or sensors");
+                    return Json(true);
                 }
+                return Json(false);
             }
             catch (Exception e)
             {

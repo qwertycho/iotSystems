@@ -38,7 +38,6 @@ namespace iotServer.Controllers
                 DeviceSetup setup = setupModel.generateSetupFromForm(Request.Form);
 
                 await setupModel.SaveSetupAsync(setup);
-
             }
             catch (Exception e)
             {

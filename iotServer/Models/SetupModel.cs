@@ -22,15 +22,26 @@ namespace iotServer.classes
         /// DeviceSetup
         ///</returns>
         /// <exception cref="Exception">
-        /// DeviceID is 0
+        /// Form item(s) is leeg
         ///</exception>
-        public DeviceSetup generateSetupFromForm(
-            IFormCollection form
-        )
+        public DeviceSetup generateSetupFromForm(IFormCollection form)
         {
             DeviceSetup setup = new DeviceSetup();
             setup.id = Convert.ToInt32(form["id"]);
             setup.deviceID = Convert.ToInt32(form["deviceID"]);
+
+            if(form.Count != 6)
+            {
+                throw new Exception("Form item(s) is leeg");
+            }
+
+            foreach(var item in form)
+            {
+                if(item.Value == "" || item.Value == "")
+                {
+                    throw new Exception($"Value {item.Key} is empty");
+                }
+            }
 
             if (setup.deviceID == 0)
             {
@@ -40,14 +51,16 @@ namespace iotServer.classes
             setup.aanTijd = Convert.ToInt32(form["aanTijd"]);
             setup.uitTijd = Convert.ToInt32(form["uitTijd"]);
 
-            String maxTemp = form["maxTemp"];
-            String minTemp = form["minTemp"];
+            String? maxTemp = form["maxTemp"];
+            String? minTemp = form["minTemp"];
 
-            maxTemp = maxTemp.Replace(",", ".");
-            minTemp = minTemp.Replace(",", ".");
+            #pragma warning disable CS8602
+            maxTemp = maxTemp.Replace(".", ",");
+            minTemp = minTemp.Replace(".", ",");
 
             setup.maxTemp = Convert.ToSingle(maxTemp);
             setup.minTemp = Convert.ToSingle(minTemp);
+            #pragma warning restore CS8602
 
             return setup;
         }

@@ -3,10 +3,28 @@ using MySqlConnector;
 
 namespace iotServer.classes
 {
-
     public class DeviceModel
     {
         private List<NewDevice> devicesToInit = new List<NewDevice>();
+
+/// <summary>
+/// Controleerd of alle gegevens van een NewDevice zijn ingevuld
+/// </summary>
+/// <param name="device">NewDevice</param>
+/// <exception cref="Exception">Geen uuid of sensors gegeven</exception>
+        public void validateNewDevice(NewDevice device)
+        {
+            if(device.Uuid == null || device.Uuid == "")
+            {
+                throw new Exception("No uuid given");
+            }
+
+            if(device.Sensors == null || device.Sensors.Count == 0 || device.Sensors[0] == "")
+            {
+                throw new Exception("No sensors given");
+            }
+        }
+
         public async Task<List<Device>> getAllDevicesAsync()
         {
             var builder = EnvParser.ConnectionStringBuilder();
