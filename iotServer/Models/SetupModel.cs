@@ -55,8 +55,8 @@ namespace iotServer.classes
             String? minTemp = form["minTemp"];
 
             #pragma warning disable CS8602
-            maxTemp = maxTemp.Replace(".", ",");
-            minTemp = minTemp.Replace(".", ",");
+            maxTemp = maxTemp.Replace(",", ".");
+            minTemp = minTemp.Replace(",", ".");
 
             setup.maxTemp = float.Parse(maxTemp);
             setup.minTemp = float.Parse(minTemp);
