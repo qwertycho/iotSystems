@@ -38,7 +38,7 @@ namespace iotServer.Controllers
                 ViewBag.deviceSensors = device.Sensors;
                 ViewBag.deviceGroup = device.Group;
                 ViewBag.deviceDate = device.Date;
-                
+
                 return View();
             }
             catch (Exception e)
@@ -53,24 +53,28 @@ namespace iotServer.Controllers
         /// De functie krijgt een uuid (mac adres) en een lijst met sensoren mee
         /// Daarvoor is de [FromBody] nodig
         /// </summary>
+        /// <param name="device"></param>
+        /// <returns>Boolean voor het succesvol ophalen of toegoegen device</returns>
         public async Task<JsonResult> Init([FromBody] NewDevice device)
         {
             try
             {
                 if (device.Uuid != null || device.Sensors != null)
                 {
-                    await deviceModel.initDevice(device);
-                    return Json(true);
-                }
-                else
-                {
-                    _logger.LogError("Device Init failed, uuid or sensors is null");
+                    if(await deviceModel.initDevice(device))
+                    {
+                        return Json(true);
+                    }
+
                     return Json(false);
+                } else
+                {
+                    throw new Exception("No uuid or sensors");
                 }
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error in Init");
+                _logger.LogError(e.Message, "Error in init");
                 return Json(false);
             }
         }

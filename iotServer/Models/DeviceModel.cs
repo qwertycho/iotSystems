@@ -171,7 +171,7 @@ namespace iotServer.classes
             return groups;
         }
 
-        public async Task<DeviceSetup> initDevice(NewDevice device)
+        public async Task<Boolean> initDevice(NewDevice device)
         {
             // controleren of device al bestaat
             var builder = EnvParser.ConnectionStringBuilder();
@@ -181,7 +181,12 @@ namespace iotServer.classes
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "SELECT deviceID FROM devices WHERE uuid = @uuid",
+                CommandText = @"
+                SELECT 
+                deviceID
+                from devices
+                where uuid = @uuid
+                ",
             };
 
             cmd.Parameters.AddWithValue("@uuid", device.Uuid);
@@ -192,16 +197,18 @@ namespace iotServer.classes
 
             if (reader.HasRows)
             {
+                Console.WriteLine("Device found, loading setup");
                 while (await reader.ReadAsync())
                 {
-                    deviceSetup.id = reader.GetInt32(0);
+                    deviceSetup.deviceID = reader.GetInt32(0);
                 }
-                return deviceSetup;
+                return true;
             }
             else
             {
+                Console.WriteLine("Device not found, inserting new device");
                 await insertDevice(device);
-                return deviceSetup;
+                return true;
             }
         }
 
