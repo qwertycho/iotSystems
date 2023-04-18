@@ -58,8 +58,8 @@ namespace iotServer.classes
             maxTemp = maxTemp.Replace(".", ",");
             minTemp = minTemp.Replace(".", ",");
 
-            setup.maxTemp = Convert.ToSingle(maxTemp);
-            setup.minTemp = Convert.ToSingle(minTemp);
+            setup.maxTemp = float.Parse(maxTemp);
+            setup.minTemp = float.Parse(minTemp);
             #pragma warning restore CS8602
 
             return setup;
