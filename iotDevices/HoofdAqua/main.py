@@ -1,19 +1,18 @@
 import time
+import _thread
 
 # importeer de classes
 import tempSens
 import waterSens
 import relais
 import wifi
+from secrets import secret
 
 #global variables
 SLEEP_TIME = 0.5
 
 # maak een object van de classes
-water = waterSens.WaterSensor()
-sensor = tempSens.TempSensor()
 relais = relais.Relais(1, 3)
-wifi = wifi.Wifi()
 
 # subscribe aan de events
 def waterLow(value):
@@ -28,15 +27,52 @@ def tempHigh(value):
 def tempLow(value):
     relais.setRelais(0, 0)
 
+class sensData:
+    canSend = False
+    waarde = 0.0
 
-water.subsribe("waterLow", waterLow)
-water.subsribe("waterHigh", waterHigh)
+waterData = sensData()
+tempData = sensData()
+lock = _thread.allocate_lock()
 
-sensor.subsribe("tempHigh", tempHigh)
-sensor.subsribe("tempLow", tempLow)
+def sensThread():
+    while True:
+        lock.acquire()
 
-while True:
-    print("temparatuur: " , sensor.getTemparature())
-    print("water is vol: " , water.getWaterLevel())
-    print(wifi.makeRequest())
-    time.sleep(SLEEP_TIME)
+        water = waterSens.WaterSensor()
+        sensor = tempSens.TempSensor()
+
+        water.subsribe("waterLow", waterLow)
+        water.subsribe("waterHigh", waterHigh)
+
+        sensor.subsribe("tempHigh", tempHigh)
+        sensor.subsribe("tempLow", tempLow)
+
+        global waterData
+        global tempData
+
+        waterData.waarde = water.getWaterLevel()
+        waterData.canSend = True
+        tempData.waarde = sensor.getTemparature()
+        tempData.canSend = True
+        lock.release()
+
+def main():
+    global wifi
+    wifi = wifi.Wifi()
+    while True:
+        lock.acquire()
+        global waterData
+        global tempData
+        if(waterData.canSend):
+            print(waterData.waarde)
+            waterData.canSend = False
+        if(tempData.canSend):
+            print(tempData.waarde)
+            tempData.canSend = False
+        lock.release()
+        print(wifi.makeRequest(secret.testUrl))
+        time.sleep(SLEEP_TIME)
+
+_thread.start_new_thread(sensThread, ())
+main()
