@@ -15,6 +15,8 @@ namespace iotServer.classes
         public float minTemp { get; set; }
         public int aanTijd { get; set; }
         public int uitTijd { get; set; }
+        public bool status {get; set; }
+        public bool error { get; set; }
     }
 
     public class Group

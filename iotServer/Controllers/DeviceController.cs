@@ -61,16 +61,17 @@ namespace iotServer.Controllers
             {
                 deviceModel.validateNewDevice(device);
 
-                if(await deviceModel.initDevice(device))
-                {
-                    return Json(true);
-                }
-                return Json(false);
+                DeviceSetup deviceSetup = await deviceModel.initDevice(device);
+
+                return Json(deviceSetup);
             }
             catch (Exception e)
             {
                 _logger.LogError(e.Message, "Error in init");
-                return Json(false);
+                DeviceSetup deviceSetup = new DeviceSetup();
+                deviceSetup.status = false;
+                deviceSetup.error = true;
+                return Json(deviceSetup);
             }
         }
 
