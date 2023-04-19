@@ -30,7 +30,7 @@ namespace iotServer.classes
             setup.id = Convert.ToInt32(form["id"]);
             setup.deviceID = Convert.ToInt32(form["deviceID"]);
 
-            if(form.Count < 6)
+            if(form.Count < 4)
             {
                 throw new Exception("Form item(s) is leeg");
             }
