@@ -37,6 +37,15 @@ namespace iotServer
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
 
+            // websockets instellen
+
+            var websocketsOptions = new WebSocketOptions
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(2)
+            };
+
+            app.UseWebSockets(websocketsOptions);
+
             app.Run();
         }
     }
