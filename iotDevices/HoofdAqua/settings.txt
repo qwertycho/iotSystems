@@ -1,0 +1,6 @@
+settingsID: 0 
+deviceID: 0 
+maxTemp: 0 
+minTemp: 0 
+aanTijd: 0 
+uitTijd: 0 
