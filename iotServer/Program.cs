@@ -16,6 +16,11 @@ namespace iotServer
             // add logging
             builder.Logging.AddConsole();
 
+
+            // dependency injection
+            builder.Services.AddSingleton<NewsLetter.NewsLetter>();
+
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
