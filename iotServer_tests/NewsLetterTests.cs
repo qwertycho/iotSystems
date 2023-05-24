@@ -13,25 +13,30 @@ namespace iotServer_tests
             NewsLetter newsLetter = new NewsLetter();
 
             bool eventFired = false;
-            string? eventMessage = "";
-            int eventValue = 0;
+            string? eventValue = "";
+            string? eventSensor = "";
+            int eventDeviceID = 0;
 
             newsLetter.sensorUpdate += (object? sender, SensorUpdateEventArgs e) =>
             {
                 eventFired = true;
-                eventMessage = e.Message;
                 eventValue = e.value;
+                eventSensor = e.sensor;
+                eventDeviceID = e.deviceID;
             };
 
             newsLetter.OnSensorUpdate(new SensorUpdateEventArgs()
             {
-                Message = "test",
-                value = 1
+            deviceID = 1,
+            value = "123",
+            sensor = "sensor"
             });
 
+
             Assert.IsTrue(eventFired);
-            Assert.AreEqual("test", eventMessage);
-            Assert.AreEqual(1, eventValue);
+            Assert.AreEqual("123", eventValue);
+            Assert.AreEqual(1, eventDeviceID);
+            Assert.AreEqual("sensor", eventSensor);
         }
 
         [TestMethod]

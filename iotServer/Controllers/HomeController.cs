@@ -48,31 +48,15 @@ namespace iotServer.Controllers
         private async Task Echo(WebSocket webSocket)
         {
 
-            _newsLetter.sensorUpdate += async (object sender, SensorUpdateEventArgs e) => {
-                Console.WriteLine("handle");
-                Console.WriteLine(e.Message);
+            _newsLetter.sensorUpdate += async (object? sender, SensorUpdateEventArgs e) => {
 
                 await webSocket.SendAsync(
-                new ArraySegment<byte>(Encoding.UTF8.GetBytes(e.Message), 0, Encoding.UTF8.GetBytes(e.Message).Length),
+                new ArraySegment<byte>(Encoding.UTF8.GetBytes(e.value), 0, Encoding.UTF8.GetBytes(e.value).Length),
                 messageType: WebSocketMessageType.Text,
                 endOfMessage: true,
                 CancellationToken.None
                 );
             };
-
-            int parxe(string message)
-            {
-                Console.WriteLine(message);
-                if (message.StartsWith("ding: "))
-                {
-                    // send event
-                    _newsLetter.OnSensorUpdate(new SensorUpdateEventArgs { Message = message });
-
-                    return int.Parse(message.Substring(6));
-                }
-                throw new Exception("Invalid message");
-            }
-
 
             var buffer = new byte[1024 * 4];
 
@@ -85,19 +69,7 @@ namespace iotServer.Controllers
             {
                 Console.WriteLine("Received: " + Encoding.UTF8.GetString(buffer));
 
-
-                try
-                {
-                int number = parxe(Encoding.UTF8.GetString(buffer));
-                sendBuffer = Encoding.UTF8.GetBytes(number.ToString());
-                }
-                catch (Exception e)
-                {
-                    Console.WriteLine(e.Message);
-                sendBuffer = Encoding.UTF8.GetBytes("Invalid message");
-                }
-
-                buffer = new byte[1024 * 4];
+               buffer = new byte[1024 * 4];
 
                 await webSocket.SendAsync(
                 new ArraySegment<byte>(sendBuffer, 0, sendBuffer.Length),
@@ -139,9 +111,6 @@ namespace iotServer.Controllers
 
         private async Task Echo2(WebSocket webSocket)
         {
-
-         
-
             var buffer = new byte[1024 * 4];
 
             var receiveResult = await webSocket.ReceiveAsync(
@@ -156,7 +125,7 @@ namespace iotServer.Controllers
 
                    int randVal = new Random().Next(0, 100);
 
-            _newsLetter.OnSensorUpdate(new SensorUpdateEventArgs { Message = randVal.ToString() });
+            _newsLetter.OnSensorUpdate(new SensorUpdateEventArgs { deviceID = 1, value= "2", sensor= "3" });
 
                 buffer = new byte[1024 * 4];
 
