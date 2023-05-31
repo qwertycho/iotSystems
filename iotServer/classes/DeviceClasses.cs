@@ -31,7 +31,7 @@ namespace iotServer.classes
     {
         public int id { get; set; } // deviceID
         public string? value { get; set; } //waarde van de sensor
-        public string? type {get; set;} // het type van de value (int, float, etc)
+        public string? type {get; set;} // het type van de sensor (temp, lux, water, etc) 
     }
 
     public class Device

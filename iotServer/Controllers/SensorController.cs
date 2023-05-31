@@ -1,31 +1,25 @@
 using iotServer.classes;
+using iotServer.Models;
 using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
-using System.Text;
-using iotServer.NewsLetter;
 
 namespace iotServer.Controllers
 {
    public class SensorController : Controller
   {
-    private readonly ILogger<SensorController> _logger;
-    private readonly NewsLetter.NewsLetter _newsLetter;
-    private DeviceModel deviceModel = new DeviceModel();    
-    //    private SensorModel sensorModel = new SensorModel();
+    private readonly ILogger _logger;
+    private readonly SensorModel _sensorModel;
+    private NewsLetter.NewsLetter  _newsLetter;
 
-    public SensorController(ILogger<SensorController> logger, NewsLetter.NewsLetter newsLetter)
+    public SensorController(ILogger logger, NewsLetter.NewsLetter newsLetter)
     {
       _logger = logger;
+      _sensorModel = new SensorModel();
       _newsLetter = newsLetter;
     }
-      
 
-    public async Task<JsonResult> updateTemp([FromBody] SensorValue sensorValue)
+    public async Task<JsonResult> temp([FromBody] SensorValue data)
     {
-      
-
-      return Json("lsp ding");
+      return Json("jup");
     }
-
   }
 }
