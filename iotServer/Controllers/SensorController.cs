@@ -23,13 +23,26 @@ namespace iotServer.Controllers
     {
       try
       {
+        
+        SensorResponse res = new SensorResponse();
+
         float temp = _sensorModel.ParseTemp(data);
-    //    int sensorID = await _sensorModel.GetSensorID(data);
-        bool SetupChanged = await _deviceModel.HasSetupChanged(data.id);
-        return Json("jup");
+        int sensorID = await _sensorModel.GetSensorID(data);
+        res.hasSetupChanged = await _deviceModel.HasSetupChanged(data.id);
+        
+        await _sensorModel.InsertTemp(sensorID, temp);
+
+        //_newsLetter.ding()
+
+        return Json(res);
       } catch(Exception e)
       {
-        return Json("nope");
+
+        SensorResponse res = new SensorResponse();
+        res.message = e.Message;
+        res.statusCode = 500;
+        res.hasSetupChanged = false;
+        return Json(res);
       }
     }
   }
