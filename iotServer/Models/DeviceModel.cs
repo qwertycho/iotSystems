@@ -374,5 +374,24 @@ namespace iotServer.classes
             }
             return deviceSetup;
         }
+
+        public async Task<bool> HasSetupChanged(int id)
+        {
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var cmd = new MySqlCommand
+            {
+                Connection = connection,
+                CommandText = "SELECT * from devices WHERE deviceID = @id AND status = 'C' ",
+            };
+
+            cmd.Parameters.AddWithValue("@id", id);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+
+            return reader.HasRows;
+        }
     }
 }

@@ -1,6 +1,4 @@
-using iotServer.Models;
-using Microsoft.AspNetCore.Mvc;
-using System.Diagnostics;
+using MySqlConnector;
 
 namespace iotServer.classes
 {
@@ -9,6 +7,11 @@ namespace iotServer.classes
 
 
     public SensorModel() {}
+
+    //public async GetSensorID(SensorValue data)
+    //{
+
+    //}
 
     public float ParseTemp(SensorValue data)
     {
