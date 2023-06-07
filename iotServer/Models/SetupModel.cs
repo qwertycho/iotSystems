@@ -159,7 +159,8 @@ namespace iotServer.classes
                 maxTemp = @maxTemp, 
                 minTemp = @minTemp
                 WHERE setupID = @id;
-            END IF
+            END IF;
+            UPDATE devices SET status = 'C' WHERE deviceID = @id
             ", connection);
 
             command.Parameters.AddWithValue("@id", setup.id);
@@ -170,7 +171,7 @@ namespace iotServer.classes
             command.Parameters.AddWithValue("@DEVICEID", setup.deviceID);
 
             await command.ExecuteNonQueryAsync();
-
+            
             connection.Close();
         }
 
