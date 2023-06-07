@@ -60,8 +60,9 @@ namespace iotServer.Controllers
             try
             {
                 deviceModel.validateNewDevice(device);
-
                 DeviceSetup deviceSetup = await deviceModel.initDevice(device);
+
+                await deviceModel.setStatus(device.Uuid, "A");
 
                 return Json(deviceSetup);
             }

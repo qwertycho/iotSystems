@@ -34,7 +34,7 @@ namespace iotServer.classes
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE status = 'A'",
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE status = 'A' OR status = 'C'",
             };
 
             using var reader = await cmd.ExecuteReaderAsync();
@@ -69,7 +69,7 @@ namespace iotServer.classes
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE status = 'a' AND groepID = @groupID",
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE status = 'a' OR status = 'C' AND groepID = @groupID",
             };
 
             cmd.Parameters.AddWithValue("@groupID", groupID);
@@ -231,6 +231,30 @@ namespace iotServer.classes
                 deviceSetup.status = false;
                 return deviceSetup;
             }
+        }
+
+        public async Task setStatus(string uuid, string status)
+        {
+          Console.WriteLine(uuid);
+          Console.WriteLine(status);
+
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var cmd = new MySqlCommand
+            (
+              @"UPDATE devices SET status = @status WHERE uuid = @uuid AND NOT status = 'D'",
+              connection
+              );
+
+
+            cmd.Parameters.AddWithValue("@status", status);
+            cmd.Parameters.AddWithValue("@uuid", uuid);
+
+            await cmd.ExecuteNonQueryAsync();
+            
+            connection.Close();
         }
 
         private async Task insertDevice(NewDevice device)
