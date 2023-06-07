@@ -24,9 +24,6 @@ namespace iotServer.Controllers
     {
       try
       {
-         _logger.LogError(data.id.ToString()); 
-         _logger.LogError(data.value.ToString());
-         _logger.LogError(data.type.ToString());
         SensorResponse res = new SensorResponse();
 
         float temp = _sensorModel.ParseTemp(data);

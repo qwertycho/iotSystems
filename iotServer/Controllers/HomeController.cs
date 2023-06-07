@@ -1,4 +1,6 @@
-﻿using iotServer.Models;
+﻿using System.Text.Json;
+using iot.ws;
+using iotServer.Models;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using System.Net.WebSockets;
@@ -34,6 +36,7 @@ namespace iotServer.Controllers
 
         public async Task ws()
         {
+          try{
             if (HttpContext.WebSockets.IsWebSocketRequest)
             {
                 WebSocket webSocket = await HttpContext.WebSockets.AcceptWebSocketAsync();
@@ -43,51 +46,43 @@ namespace iotServer.Controllers
             {
                 HttpContext.Response.StatusCode = 400;
             }
+            } catch(Exception e)
+          {
+            _logger.LogError(e.Message);
+          }
         }
+
+
 
         private async Task Echo(WebSocket webSocket)
         {
+            try{
+              
+            
+              WS sock = new WS(webSocket);
+            
+              _newsLetter.sensorUpdate += async (object? sender, SensorUpdateEventArgs e) => {
 
-            _newsLetter.sensorUpdate += async (object? sender, SensorUpdateEventArgs e) => {
-
-                await webSocket.SendAsync(
-                new ArraySegment<byte>(Encoding.UTF8.GetBytes(e.value), 0, Encoding.UTF8.GetBytes(e.value).Length),
-                messageType: WebSocketMessageType.Text,
-                endOfMessage: true,
-                CancellationToken.None
-                );
+                await sock.SendAsync(JsonSerializer.Serialize(e));
+                
             };
 
-            var buffer = new byte[1024 * 4];
-
-            var receiveResult = await webSocket.ReceiveAsync(
-                new ArraySegment<byte>(buffer), CancellationToken.None);
-
-            var sendBuffer = Encoding.UTF8.GetBytes("Hello from the server");
+            var receiveResult = await sock.ReceiveAsync();
 
             while (!receiveResult.CloseStatus.HasValue)
             {
-                Console.WriteLine("Received: " + Encoding.UTF8.GetString(buffer));
+              Console.WriteLine("Received: " + Encoding.UTF8.GetString(sock.getBufferValue()));
 
-               buffer = new byte[1024 * 4];
+              await sock.SendAsync("Hello from sock");
 
-                await webSocket.SendAsync(
-                new ArraySegment<byte>(sendBuffer, 0, sendBuffer.Length),
-                messageType: WebSocketMessageType.Text,
-                endOfMessage: true,
-                CancellationToken.None
-                );
-
-                receiveResult = await webSocket.ReceiveAsync(
-                    new ArraySegment<byte>(buffer), CancellationToken.None);
-
+              receiveResult = await sock.ReceiveAsync();
             }
 
-            await webSocket.CloseAsync(
-            WebSocketCloseStatus.NormalClosure,
-            "lol",
-            CancellationToken.None);
-
+            await sock.CloseAsync("gesloten");
+            }catch(Exception e)
+            {
+              _logger.LogError(e.Message);
+            }
         }
 
         public IActionResult Privacy()
