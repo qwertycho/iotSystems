@@ -25,12 +25,17 @@ namespace iot.ws
 
     public async Task SendAsync(string message)
     {
-      await sock.SendAsync(
-      new ArraySegment<byte>(Encoding.UTF8.GetBytes(message), 0, Encoding.UTF8.GetBytes(message).Length),
-      messageType: WebSocketMessageType.Text,
-      endOfMessage: true,
-      CancellationToken.None
-      );
+      try{
+        await sock.SendAsync(
+        new ArraySegment<byte>(Encoding.UTF8.GetBytes(message), 0, Encoding.UTF8.GetBytes(message).Length),
+        messageType: WebSocketMessageType.Text,
+        endOfMessage: true,
+        CancellationToken.None
+        );
+      }catch(Exception e)
+      {
+        Console.WriteLine(e.Message);
+      }
     }
 
     public async Task<WebSocketReceiveResult> ReceiveAsync()

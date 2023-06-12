@@ -62,6 +62,7 @@ namespace iotServer.NewsLetter
 
     public class SensorUpdateEventArgs : EventArgs
     {
+      public string eventType {get; set;}
       public int deviceID {get; set;}
       public string? value {get; set;}
       public string? sensor {get; set;}

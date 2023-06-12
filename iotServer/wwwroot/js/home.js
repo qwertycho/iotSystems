@@ -1,10 +1,14 @@
-let sock = new WebSocket("ws://localhost:5001/home/ws")
+let url = window.location;
+url = String(url)
+url = url.replace("http", "ws");
+url = url.replace("https:", "ws");
+
+let sock = new WebSocket(url + "home/ws")
 sock.onopen = function (event) {
     console.log("Connection established");
     sock.send("Hello from client");
     console.log("Message sent");
 }
-
 
 sock.onmessage = function (event) {
     console.log(event.data);

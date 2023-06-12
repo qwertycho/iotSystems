@@ -32,7 +32,12 @@ namespace iotServer.Controllers
         
         await _sensorModel.InsertTemp(sensorID, temp);
 
-        _newsLetter.OnSensorUpdate(new NewsLetter.SensorUpdateEventArgs {value = data.value, deviceID = data.id, sensor = data.type});
+        _newsLetter.OnSensorUpdate(new NewsLetter.SensorUpdateEventArgs {
+            value = data.value, 
+            deviceID = data.id, 
+            sensor = data.type,
+            eventType = "sensor"
+            });
 
         return Json(res);
       } catch(Exception e)
