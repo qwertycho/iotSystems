@@ -3,7 +3,7 @@
 }
 
 @section myScripts{
-    <script src="/js/dashboard.js" defer></script>
+    <script src="" defer></script>
 }
 <div>
     <div class="header text-center">
@@ -11,33 +11,35 @@
     </div>
     <div class="container">
         <div class="col-sm">
-           
+          
+          <form action="/device/UpdateDevice">
+          @Html.AntiForgeryToken()
+          <label>Devicename: </label> <input name="deviceName" placeholder="@ViewBag.deviceName">
+          <br/>
+          <label>DeviceID: </label> <input readonly name="deviceID" value="@ViewBag.deviceID" placeholder="@ViewBag.deviceID">
+          <br />
+          <label>Device group: </label> 
+          <select name="groupID" placeholder="@ViewBag.deviceGroup">
+            @for (int i = 0; i < @ViewBag.groups.Count; i++)
+            {
+            <option>@ViewBag.groups[i].id</option>
+            }
+          </select>
+          <br />
+          <label>Device uuid: </label> <input readonly name="uuid" value="@ViewBag.deviceUUID" placeholder="@ViewBag.deviceUUID">
+          <br />
+          <label>Device aanmelding: </label> <input readonly name="date"  value="@ViewBag.deviceDate" placeholder="@ViewBag.deviceDate">
+          <br />
+          <button>opslaan</button>
+        <br />
+        <br />
+        <br />
+          </form>
+            
+        <a href="delete?deviceID=@ViewBag.deviceID">
+          <button class="btn btn-danger">Verwijderen</button>
+        </a>
            <table>
-            <tr>
-                <th>Device Name: </th>
-                <td>@ViewBag.deviceName</td>
-            </tr>
-
-            <tr>
-                <th> Device id</th>
-                <td>@ViewBag.deviceId</td>
-            </tr>
-
-            <tr>
-                <th>Device groep: </th>
-                <td>@ViewBag.deviceGroup</td>
-            </tr>
-
-            <tr>
-                <th>Device Uuid: </th>
-                <td>@ViewBag.deviceUuid</td>
-            </tr>
-
-            <tr>
-                <th>Device aanmelding: </th>
-                <td>@ViewBag.deviceDate</td>
-            </tr>
-
             <tr>
                 <th>Sensors</th>
             @for (int i = 0; i < ViewBag.deviceSensors.Count; i++)

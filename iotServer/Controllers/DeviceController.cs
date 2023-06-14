@@ -1,5 +1,4 @@
 using Microsoft.AspNetCore.Mvc;
-using Newtonsoft.Json;
 using iotServer.classes;
 
 // loggen
@@ -28,9 +27,11 @@ namespace iotServer.Controllers
         {
             try
             {
-                int id = Convert.ToInt32(Request.Query["id"]);
+                int id = int.Parse(Request.Query["id"]);
                 Device device = await deviceModel.GetDeviceByID(id);
-
+                List<Group> groepen = await deviceModel.GetAllGroupsAsync();
+                Console.WriteLine(groepen.Count);
+               ViewBag.groups = groepen; 
 // dit wat mooier maken met een viewmodel en een foreach
                 ViewBag.deviceName = device.Name;
                 ViewBag.deviceID = device.Id;
@@ -38,12 +39,12 @@ namespace iotServer.Controllers
                 ViewBag.deviceSensors = device.Sensors;
                 ViewBag.deviceGroup = device.Group;
                 ViewBag.deviceDate = device.Date;
-
+                ViewBag.deviceStatus = device.Status;
                 return View();
             }
             catch (Exception e)
             {
-                _logger.LogError(e, "Error in details");
+              _logger.LogError("fout in details: " + e.Message);
                 return View();
             }
         }
@@ -92,5 +93,40 @@ namespace iotServer.Controllers
 
         }
 
+        public async Task<IActionResult> UpdateDevice(string deviceID, string groupID, string deviceName, string deviceStatus)
+        {
+          try{
+            int id = int.Parse(deviceID);
+            int group = int.Parse(groupID);
+            if(deviceName != "" && deviceName != null)
+            {
+              await deviceModel.UpdateDeviceName(id, deviceName);
+            }
+            if(group != 0 && id != 0)
+            {
+              await deviceModel.UpdateDeviceGroup(id, group);
+            }
+
+            return Redirect("/device/details?id=" + deviceID);
+          } catch(Exception e)
+          {
+            _logger.LogError(e.Message);
+            return Redirect("/device/details?id=" + deviceID);
+          }
+        }
+
+        public async Task<IActionResult> delete(string deviceID)
+        {
+
+          try{
+            int id = int.Parse(deviceID);
+            await deviceModel.deleteDevice(id);
+            return Redirect("/dashboard");
+          } catch(Exception e)
+          {
+            _logger.LogError(e.Message);
+            return Redirect("/dashboard");
+          }
+        }
     }
 }

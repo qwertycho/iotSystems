@@ -174,6 +174,5 @@ namespace iotServer.classes
             
             connection.Close();
         }
-
     }
 }

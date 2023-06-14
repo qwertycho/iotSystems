@@ -42,6 +42,7 @@ namespace iotServer.classes
         public string? Uuid { get; set; }
         public DateTime Date { get; set; }
         public List<string>? Sensors { get; set; }
+        public string? Status {get; set;}
     }
 }
 

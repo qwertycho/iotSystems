@@ -105,7 +105,7 @@ namespace iotServer.classes
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE deviceID = @id",
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum, status FROM devices WHERE deviceID = @id",
             };
 
             cmd.Parameters.AddWithValue("@id", id);
@@ -123,6 +123,7 @@ namespace iotServer.classes
                 device.Group = reader.GetInt32(2);
                 device.Uuid = reader.GetString(3);
                 device.Date = reader.GetDateTime(4);
+                device.Status = reader.GetString(5);
                 device.Sensors = sensors;
             }
 
@@ -417,5 +418,92 @@ namespace iotServer.classes
 
             return reader.HasRows;
         }
+
+        public async Task UpdateDeviceGroup(int deviceID,  int groupID)
+        {
+
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var cmd = new MySqlCommand
+            {
+                Connection = connection,
+                CommandText = "UPDATE devices SET groepID = @groepID WHERE deviceID = @deviceID; UPDATE devices SET status = 'A' WHERE deviceID = @deviceID AND status != 'C' ",
+            };
+
+            cmd.Parameters.AddWithValue("@deviceID", deviceID);
+            cmd.Parameters.AddWithValue("@groepID", groupID);
+
+            using var reader = await cmd.ExecuteReaderAsync();
+        }
+
+      public async Task<List<Group>> GetAllGroups()
+      {
+
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var command = new MySqlCommand(@"
+                SELECT * FROM groepen WHERE actief = 1
+            ", connection);
+
+            using var reader = await command.ExecuteReaderAsync();
+
+            List<Group> groepen = new List<Group>();
+            
+            while(reader.Read())
+            {
+              Group group = new Group();
+              group.id = reader.GetInt16(0);
+              group.name = reader.GetString(1);
+              group.color = reader.GetString(2);
+              groepen.Add(group);
+            }
+            
+            connection.Close();
+            return groepen;
+      }
+
+
+    public async Task UpdateDeviceName(int deviceID, string name)
+    {
+
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var command = new MySqlCommand(@"
+               UPDATE devices SET deviceNaam = @name WHERE deviceID = @id;
+            ", connection);
+
+            command.Parameters.AddWithValue("@name", name);
+            command.Parameters.AddWithValue("@id", deviceID);
+
+            await command.ExecuteNonQueryAsync();
+            
+            connection.Close();
+    }
+
+
+    public async Task deleteDevice(int deviceID)
+    {
+
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var command = new MySqlCommand(@"
+               UPDATE devices SET status = 'D' WHERE deviceID = @id
+            ", connection);
+
+            command.Parameters.AddWithValue("@id", deviceID);
+
+            await command.ExecuteNonQueryAsync();
+            
+            connection.Close();
+    }
+
     }
 }
