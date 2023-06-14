@@ -23,42 +23,16 @@ class TempSensor:
         self.samples = samples
         self.power = machine.Pin(powerPin, machine.Pin.OUT)
         self.power.on()
-
-    def getSensorCurrent(self):
-        '''
-        Krijg de weerstand van de thermistor
-        '''
-        R = 10000 / (65535/self.adc.read_u16() - 1)
-        return R
-
-    def getTemparature(self, Ro=10000.0, To=25.0, beta=3950.0):
-        '''
-        Krijg de temperatuur van een thermistor
-        r: de weerstand van de thermistor
-        Ro: de weerstand van de thermistor bij 25 graden
-        To: de temperatuur van de thermistor bij 25 graden
-        beta: de beta waarde van de thermistor
-        samples: het aantal samples dat gemiddeld moet worden
-        voert een callback uit als de temperatuur te hoog of te laag is
-        '''
-
-        r = self.getSensorCurrent()
-
-        avarage = 0
-
-        for i in range(self.samples):
-            steinhart = math.log(r / Ro) / beta      # log(R/Ro) / beta
-            steinhart += 1.0 / (To + 273.15)         # log(R/Ro) / beta + 1/To
-            steinhart = (1.0 / steinhart) - 273.15   # Invert, convert to C
-            avarage += steinhart - self._sensort_offset
-            time.sleep(0.01)
-
-        if(avarage / self.samples > self.maxTemp):
-            self.notify("maxTemp", avarage / self.samples)
-        elif(avarage / self.samples < self.minTemp):
-            self.notify("minTemp", avarage / self.samples)
-
-        return avarage / self.samples
+    
+    def getTemp(self):
+        R0 = 10000
+        T0 = 298.15
+        B = 3950
+        V = self.adc.read_u16() * 3.3 / 65535.0
+        R = (3.3 * 10000 / V) - 10000
+        inv_T = 1/T0 + (1/B) * math.log(R/R0)
+        T = (1/inv_T) - 273.15
+        return T
     
     def subsribe (self, event, callback):
         '''

@@ -3,13 +3,13 @@ import urequests
 import ubinascii
 import time
 
-import secrets
+import env
 
-TIMEOUT = 2
+TIMEOUT = 5
 
 class Wifi:
-    SSID = secrets.secret.ssid
-    PASSWORD = secrets.secret.password
+    SSID = env.SSID
+    PASSWORD = env.PASSWORD
     wlan = network.WLAN(network.STA_IF)
     macadress = ""
 
@@ -46,9 +46,9 @@ class Wifi:
     def initDevice (self, sensors):
         try:
             json = {"Uuid": self.macadress, "Sensors": sensors}
-            response = urequests.post(secrets.secret.initUrl, json=json, timeout=TIMEOUT)
+            response = urequests.post(env.INIT_URL, json=json)
             return response.json()
         except:
-            print("Error while making request")
+            print("Error while making request to init device")
             self.connect()
             raise Exception("Network error while init device")

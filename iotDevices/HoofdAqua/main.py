@@ -6,7 +6,7 @@ import tempSens
 import waterSens
 import relais
 import wifi
-from secrets import secret
+import env
 
 #global variables
 SLEEP_TIME = 0.5
@@ -36,24 +36,25 @@ tempData = sensData()
 lock = _thread.allocate_lock()
 
 def sensThread():
+
+    water = waterSens.WaterSensor()
+    sensor = tempSens.TempSensor()
+
+    water.subsribe("waterLow", waterLow)
+    water.subsribe("waterHigh", waterHigh)
+
+    sensor.subsribe("tempHigh", tempHigh)
+    sensor.subsribe("tempLow", tempLow)
+ 
     while True:
         lock.acquire()
-
-        water = waterSens.WaterSensor()
-        sensor = tempSens.TempSensor()
-
-        water.subsribe("waterLow", waterLow)
-        water.subsribe("waterHigh", waterHigh)
-
-        sensor.subsribe("tempHigh", tempHigh)
-        sensor.subsribe("tempLow", tempLow)
 
         global waterData
         global tempData
 
         waterData.waarde = water.getWaterLevel()
         waterData.canSend = True
-        tempData.waarde = sensor.getTemparature()
+        tempData.waarde = sensor.getTemp()
         tempData.canSend = True
         lock.release()
 
@@ -71,7 +72,7 @@ def main():
             print(tempData.waarde)
             tempData.canSend = False
         lock.release()
-        print(wifi.makeRequest(secret.testUrl))
+        print(wifi.makeRequest(env.TEST_URL))
         time.sleep(SLEEP_TIME)
 
 _thread.start_new_thread(sensThread, ())
