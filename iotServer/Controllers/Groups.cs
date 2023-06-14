@@ -36,6 +36,17 @@ namespace iotServer.Controllers
           return Redirect("/groups");
         }
       }
+
+      public async Task<IActionResult> newGroup(string name, string color)
+      {
+        try{
+          await model.newGroup(name, color);
+        }catch(Exception e){
+          _logger.LogError(e.Message);
+        }
+        return RedirectToAction("Index");
+      }
     }
+
 
 }

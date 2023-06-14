@@ -62,6 +62,7 @@ namespace iotServer.classes
 
         public async Task<List<Device>> getDeviceByGroupAsync(int groupID)
         {
+          Console.WriteLine("groepID: " + groupID);
             var builder = EnvParser.ConnectionStringBuilder();
             using var connection = new MySqlConnection(builder.ConnectionString);
             await connection.OpenAsync();
@@ -69,7 +70,7 @@ namespace iotServer.classes
             using var cmd = new MySqlCommand
             {
                 Connection = connection,
-                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE status = 'a' OR status = 'C' AND groepID = @groupID",
+                CommandText = "SELECT deviceID, deviceNaam, groepID, uuid, aanmeldDatum FROM devices WHERE groepID = @groupID AND status = 'a' OR status = 'C' ",
             };
 
             cmd.Parameters.AddWithValue("@groupID", groupID);
@@ -80,6 +81,7 @@ namespace iotServer.classes
 
             while (await reader.ReadAsync())
             {
+              Console.WriteLine("device: " + reader.GetInt32(0));
                 List<string> sensors = await getDeviceSensors(reader.GetInt32(0));
 
                 Device device = new Device
@@ -184,6 +186,7 @@ namespace iotServer.classes
                     color = reader.GetString(2),
                     devices = getDeviceByGroupAsync(reader.GetInt32(0)).Result
                 };
+
                 groups.Add(group);
             }
             return groups;

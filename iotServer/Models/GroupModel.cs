@@ -39,8 +39,6 @@ namespace iotServer.Models
 
       public async Task Update(int id, string color, string name)
       {
-
-
             var builder = EnvParser.ConnectionStringBuilder();
             using var connection = new MySqlConnection(builder.ConnectionString);
             await connection.OpenAsync();
@@ -57,5 +55,23 @@ namespace iotServer.Models
 
             connection.Close();
       }
+
+    public async Task newGroup(string name, string color)
+    {
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var command = new MySqlCommand(@"
+                INSERT INTO groepen (groepNaam, groepKleur) VALUES (@name, @color)
+            ", connection);
+
+            command.Parameters.AddWithValue("@name", name);
+            command.Parameters.AddWithValue("@color", color);
+
+            await command.ExecuteNonQueryAsync();
+
+            connection.Close();
+    }
     }
 }

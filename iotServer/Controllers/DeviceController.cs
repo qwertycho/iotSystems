@@ -30,9 +30,7 @@ namespace iotServer.Controllers
                 int id = int.Parse(Request.Query["id"]);
                 Device device = await deviceModel.GetDeviceByID(id);
                 List<Group> groepen = await deviceModel.GetAllGroupsAsync();
-                Console.WriteLine(groepen.Count);
-               ViewBag.groups = groepen; 
-// dit wat mooier maken met een viewmodel en een foreach
+                ViewBag.groups = groepen; 
                 ViewBag.deviceName = device.Name;
                 ViewBag.deviceID = device.Id;
                 ViewBag.deviceUUID = device.Uuid;

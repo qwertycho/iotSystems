@@ -1,4 +1,3 @@
-
 @{
     ViewData["Title"] = "Groepen";
 }
@@ -12,6 +11,23 @@
     </div>
     <div class="container">
 
+    <form action="/groups/newGroup">
+      @Html.AntiForgeryToken()
+      <label>Nieuwe groep aanmaken</label>
+      <br />
+      <label>Name: </label><input type="text" name="name" required>
+      <label>Color: </label>
+        <select name="color" class="form-select">
+          <option value="bg-info" >bg-info</option>
+          <option value="bg-warning" >bg-warning</option>
+          <option value="bg-danger" >bg-danger</option>
+          <option value="bg-secundary" >bg-secundary</option>
+          <option value="bg-light">bg-light</option>
+        </select>
+      <button>Create</button>
+          </form>
+    <br/>
+    <br/>
     @for(int i = 0; i < ViewBag.groups.Count; i++)
       {
           <form action="/groups/update">
@@ -24,7 +40,7 @@
           <option value="bg-warning" >bg-warning</option>
           <option value="bg-danger" >bg-danger</option>
           <option value="bg-secundary" >bg-secundary</option>
-          <option value="bg-muted" >bg-muted</option>
+          <option value="bg-light">bg-light</option>
         </select>
           <button>update</button>
           </form>

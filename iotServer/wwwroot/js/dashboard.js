@@ -5,6 +5,7 @@ async function getGroups() {
   fetch("/dashboard/groups")
     .then((response) => response.json())
     .then((data) => {
+      console.log(data)
       buildDisplay(data);
     });
 }
