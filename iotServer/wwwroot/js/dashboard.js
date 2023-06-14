@@ -69,8 +69,9 @@ function buildSensor(sensors, id) {
  * Loops through all the devices in the group and calls buildDevice for each device.
  */
 function buildGroup(group) {
+  console.log(group)
   let div = document.createElement("div");
-  div.classList.add("group", "border", "border-dark", "p-2", "m-2");
+  div.classList.add("group", "border", "border-dark", "p-2", "m-2", group.color);
   let groupTitle = document.createElement("h2");
   groupTitle.innerText = `Groep: ${group.name}`;
   div.appendChild(groupTitle);

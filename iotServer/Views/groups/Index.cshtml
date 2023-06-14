@@ -1,0 +1,34 @@
+
+@{
+    ViewData["Title"] = "Groepen";
+}
+
+@section myScripts{
+    <script src="" defer></script>
+}
+<div>
+    <div class="header text-center">
+        <h1 >Groepen</h1>
+    </div>
+    <div class="container">
+
+    @for(int i = 0; i < ViewBag.groups.Count; i++)
+      {
+          <form action="/groups/update">
+          @Html.AntiForgeryToken()
+          <label>Name: </label><input name="name" value="@ViewBag.groups[i].name">
+          <label>Id: </label><input readonly name="id" value="@ViewBag.groups[i].id">
+          <label>Color:</label> 
+        <select name="color" class="form-select" selected="@ViewBag.groups[i].color">
+          <option value="bg-info" >bg-info</option>
+          <option value="bg-warning" >bg-warning</option>
+          <option value="bg-danger" >bg-danger</option>
+          <option value="bg-secundary" >bg-secundary</option>
+          <option value="bg-muted" >bg-muted</option>
+        </select>
+          <button>update</button>
+          </form>
+      }
+
+    </div>
+</div>
