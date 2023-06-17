@@ -34,6 +34,13 @@ namespace iotServer
 
             var app = builder.Build();
 
+            var websocketsOptions = new WebSocketOptions
+            {
+                KeepAliveInterval = TimeSpan.FromSeconds(2)
+            };
+
+            app.UseWebSockets(websocketsOptions);
+
             // Configure the HTTP request pipeline.
             if (!app.Environment.IsDevelopment())
             {
@@ -55,12 +62,7 @@ namespace iotServer
 
             // websockets instellen
 
-            var websocketsOptions = new WebSocketOptions
-            {
-                KeepAliveInterval = TimeSpan.FromSeconds(2)
-            };
-
-            app.UseWebSockets(websocketsOptions);
+  
 
             app.Run();
         }
