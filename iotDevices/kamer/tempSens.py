@@ -25,7 +25,7 @@ class TempSensor:
         R0 = 10000
         T0 = 298.15
         B = 3950
-        offset = 13.5
+        offset = 5.5
         average = 0
         for i in range(0, 10):
             V = self.adc.read_u16() * 3.3 / 65535.0
