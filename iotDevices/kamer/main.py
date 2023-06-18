@@ -4,48 +4,64 @@ import _thread
 # importeer de classes
 import tempSens
 import wifi
-import setup
+import deviceSetup
+import waterSens
 import env
 
-#global variables
-SLEEP_TIME = 0.5
+wifir = wifi.Wifi()
+wifir.connect()
 
-if not setup.startSetup():
-    print("Setup not done")
-    setup.initDevice(["temp"])
-else:
-    print("Setup done")
+
+#global 
+SLEEP_TIME = 10
+
+deviceSetup.initDevice(env.SENSORS)
 
 class sensData:
     canSend = False
     waarde = 0.0
+class waterData:
+    canSend = False
+    waarde = False
 
-waterData = sensData()
 tempData = sensData()
+waterData = waterData()
 lock = _thread.allocate_lock()
 
 def sensThread():
     sensor = tempSens.TempSensor()
+    wSensor = waterSens.WaterSensor(powerPin=0, sensorPin=2)
     while True:
         lock.acquire()
 
-        global waterData
         global tempData
+        global waterData
+
+        waterData.waarde = wSensor.getWaterLevel()
+        waterData.canSend = True
 
         tempData.waarde = sensor.getTemp()
         tempData.canSend = True
         lock.release()
 
 def main():
-    global wifi
-    wifi = wifi.Wifi()
+    global wifir
     while True:
+        print("main")
         lock.acquire()
         global waterData
         if(tempData.canSend):
             print(tempData.waarde)
-            wifi.sendData(tempData.waarde, "temp")
+            if not wifir.sendData(tempData.waarde, "temp"):
+                deviceSetup.initDevice(env.SENSORS)
             tempData.canSend = False
+        
+        # if(waterData.canSend):
+        #     print(waterData.waarde)
+        #     if not wifir.sendData(waterData.waarde, "water"):
+        #         deviceSetup.initDevice(env.SENSORS)
+        #     waterData.canSend = False
+
         lock.release()
         time.sleep(SLEEP_TIME)
 

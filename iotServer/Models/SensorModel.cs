@@ -44,6 +44,12 @@ namespace iotServer.classes
         return float.Parse(data.value);
     }
 
+    public bool ParseWater(SensorValue data)
+    {
+        AssertType(data.type, "water");
+        return data.value == "1" || data.value == "true" || data.value == "True";
+    }
+
     private bool AssertType(string? checkType, string? toBeType)
     {
       if(checkType != toBeType)
@@ -66,6 +72,24 @@ namespace iotServer.classes
 
       cmd.Parameters.AddWithValue("@sensorID", sensorID);
       cmd.Parameters.AddWithValue("@tempWaarde", value);
+
+      await cmd.ExecuteNonQueryAsync();
+    }
+
+    public async Task InsertWater(int sensorID, bool value)
+    {
+      var builder = EnvParser.ConnectionStringBuilder();
+      using var connection = new MySqlConnection(builder.ConnectionString);
+      await connection.OpenAsync();
+
+      using var cmd = new MySqlCommand
+      {
+        Connection = connection,
+        CommandText = "INSERT INTO waterMetingen (sensorID, waterWaarde) VALUES (@sensorID, @waterWaarde) ",
+      };
+
+      cmd.Parameters.AddWithValue("@sensorID", sensorID);
+      cmd.Parameters.AddWithValue("@waterWaarde", value);
 
       await cmd.ExecuteNonQueryAsync();
     }
