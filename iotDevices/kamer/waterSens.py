@@ -13,11 +13,16 @@ class WaterSensor:
         Zet de power aan en initialiseer de adc
         '''
         self.powerpin = machine.Pin(powerPin, machine.Pin.OUT)
-        self.powerpin.value(1)
+        self.powerpin.on()
         self.sensorsPin = machine.Pin(sensorPin, machine.Pin.IN)
     
     def getWaterLevel(self) -> bool:
-        return not self.sensorsPin.value()
+        sum = 0
+        for i in range(0, 50):
+            sum += self.sensorsPin.value()
+            time.sleep(0.01)
+        print(sum)
+        return sum > 25
         
     def subsribe (self, event, callback) -> None:
         '''

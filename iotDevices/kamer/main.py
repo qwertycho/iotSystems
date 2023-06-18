@@ -56,11 +56,11 @@ def main():
                 deviceSetup.initDevice(env.SENSORS)
             tempData.canSend = False
         
-        # if(waterData.canSend):
-        #     print(waterData.waarde)
-        #     if not wifir.sendData(waterData.waarde, "water"):
-        #         deviceSetup.initDevice(env.SENSORS)
-        #     waterData.canSend = False
+        if(waterData.canSend):
+            print(waterData.waarde)
+            if not wifir.sendData(waterData.waarde, "water"):
+                deviceSetup.initDevice(env.SENSORS)
+            waterData.canSend = False
 
         lock.release()
         time.sleep(SLEEP_TIME)

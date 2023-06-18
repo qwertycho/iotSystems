@@ -139,7 +139,7 @@ function eventController(event){
 function updateSensor(event){
   let device = document.getElementsByClassName(`device${event.deviceID}`)
   let item = document.querySelector(`.sensor-${event.sensor}-${event.deviceID}`)
-  item.innerHTML = "Temp: " + event.value;
+  item.innerHTML = `${event.sensor}: ${event.value}`
 }
 
 let url = window.location;

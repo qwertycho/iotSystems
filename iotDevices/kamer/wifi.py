@@ -70,6 +70,7 @@ class Wifi:
             print("URL: " + url)
             print(deviceSetup.getDeviceID())
             response = urequests.post(url, json={"id": deviceSetup.getDeviceID(), "type": str(type), "value": str(value)})
+            print({"id": deviceSetup.getDeviceID(), "type": str(type), "value": str(value)})
             print(response.json())
 
             if response.json()["statusCode"] == 500 or response.json()["hasSetupChanged"] == True:
