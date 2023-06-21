@@ -46,6 +46,17 @@ namespace iotServer.Controllers
         }
         return RedirectToAction("Index");
       }
+
+      public async Task<IActionResult> deleteGroup(string id)
+      {
+        try{
+          int groupID = int.Parse(id);
+          await model.deleteGroup(groupID);
+        }catch(Exception e){
+          _logger.LogError(e.Message);
+        }
+        return RedirectToAction("Index");
+      }
     }
 
 

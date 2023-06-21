@@ -5,7 +5,6 @@ async function getGroups() {
   fetch("/dashboard/groups")
     .then((response) => response.json())
     .then((data) => {
-      console.log(data)
       buildDisplay(data);
     });
 }
@@ -34,7 +33,7 @@ function buildDisplay(data) {
 
 function buildDevice(device) {
   let div = document.createElement("div");
-  div.classList.add('border', 'border-dark', 'p-2', 'm-2', `device-${device.id}`, 'device', 'col-12', 'col-md-6', 'col-lg-4', 'col-xl-3');
+  div.classList.add('border', 'border-dark', 'p-2', 'm-2', `device-${device.id}`, 'device', 'col-12', 'col-md-6', 'col-lg-4', 'col-xl-3', "rounded", "d-inline-block");
 
   div.addEventListener("click", () => {
     window.location.href = `/device/details?id=${device.id}`;
@@ -70,11 +69,11 @@ function buildSensor(sensors, id) {
  * Loops through all the devices in the group and calls buildDevice for each device.
  */
 function buildGroup(group) {
-  console.log(group)
   let div = document.createElement("div");
-  div.classList.add("group", "border", "border-dark", "p-2", "m-2", group.color);
+  div.classList.add("group", "border", "border-dark", "p-5", "m-2", group.color);
   let groupTitle = document.createElement("h2");
-  groupTitle.innerText = `Groep: ${group.name}`;
+  groupTitle.innerText = `${group.name}`;
+  groupTitle.classList.add("text-center");
   div.appendChild(groupTitle);
   group.devices.forEach((device) => {
     div.appendChild(buildDevice(device));
@@ -124,7 +123,6 @@ async function buildNewDevices(data) {
 }
 
 function eventController(event){
-  console.log(event.data);
   event = JSON.parse(event.data);
 
   switch(event.eventType){
@@ -151,7 +149,6 @@ let sock = new WebSocket(url + "/ws")
 sock.onopen = function (event) {
     console.log("Connection established");
     sock.send("Hello from client");
-    console.log("Message sent");
 }
 
 sock.onmessage = function (event) {

@@ -73,5 +73,22 @@ namespace iotServer.Models
 
             connection.Close();
     }
+
+    public async Task deleteGroup(int id)
+    {
+            var builder = EnvParser.ConnectionStringBuilder();
+            using var connection = new MySqlConnection(builder.ConnectionString);
+            await connection.OpenAsync();
+
+            using var command = new MySqlCommand(@"
+                DELETE FROM groepen WHERE groepID = @id
+            ", connection);
+
+            command.Parameters.AddWithValue("@id", id);
+
+            await command.ExecuteNonQueryAsync();
+
+            connection.Close();
     }
+  }
 }

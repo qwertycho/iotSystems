@@ -1,50 +1,64 @@
 @{
-    ViewData["Title"] = "Groepen";
+  ViewData["Title"] = "Groepen";
 }
 
 @section myScripts{
-    <script src="" defer></script>
+  <script src="" defer></script>
 }
 <div>
-    <div class="header text-center">
-        <h1 >Groepen</h1>
-    </div>
-    <div class="container">
+  <div class="header text-center">
+    <h1>Groepen</h1>
+  </div>
+  <div class="container">
 
-    <form action="/groups/newGroup">
+    <form action="/groups/newGroup" class="bg-light p-5">
       @Html.AntiForgeryToken()
-      <label>Nieuwe groep aanmaken</label>
-      <br />
-      <label>Name: </label><input type="text" name="name" required>
-      <label>Color: </label>
+      <h5 class="text-center">Create new group</h5>
+      <div class="form-group">
+        <label>Name: </label>
+        <input type="text" name="name" class="form-controll" required>
+      </div>
+      <div class="form-group">
+        <label>Color: </label>
         <select name="color" class="form-select">
-          <option value="bg-info" >bg-info</option>
-          <option value="bg-warning" >bg-warning</option>
-          <option value="bg-danger" >bg-danger</option>
-          <option value="bg-secundary" >bg-secundary</option>
+          <option value="bg-info">bg-info</option>
+          <option value="bg-warning">bg-warning</option>
+          <option value="bg-danger">bg-danger</option>
+          <option value="bg-secundary">bg-secundary</option>
           <option value="bg-light">bg-light</option>
         </select>
-      <button>Create</button>
-          </form>
-    <br/>
-    <br/>
-    @for(int i = 0; i < ViewBag.groups.Count; i++)
-      {
-          <form action="/groups/update">
-          @Html.AntiForgeryToken()
-          <label>Name: </label><input name="name" value="@ViewBag.groups[i].name">
-          <label>Id: </label><input readonly name="id" value="@ViewBag.groups[i].id">
-          <label>Color:</label> 
-        <select name="color" class="form-select" selected="@ViewBag.groups[i].color">
-          <option value="bg-info" >bg-info</option>
-          <option value="bg-warning" >bg-warning</option>
-          <option value="bg-danger" >bg-danger</option>
-          <option value="bg-secundary" >bg-secundary</option>
-          <option value="bg-light">bg-light</option>
-        </select>
-          <button>update</button>
-          </form>
-      }
+      </div>
+      <button class="btn btn-success">Create</button>
+    </form>
+    <br />
+    <br />
+    @for (int i = 0; i < ViewBag.groups.Count; i++)
+    {
+      <form action="/groups/update" class="@ViewBag.groups[i].color p-5">
+        @Html.AntiForgeryToken()
+        <h5 class="text-center">@ViewBag.groups[i].name</h5>
+        <div class="form-group">
+          <label>Name: </label>
+          <input name="name" value="@ViewBag.groups[i].name" class="form-text">
+        </div>
+        <div class="form-group">
+          <label>Id: </label>
+          <input readonly name="id" value="@ViewBag.groups[i].id" class="form-text">
+        </div>
+        <div class="form-group">
+          <label>Color:</label>
+          <select name="color" class="form-select" selected="@ViewBag.groups[i].color">
+            <option value="bg-info">bg-info</option>
+            <option value="bg-warning">bg-warning</option>
+            <option value="bg-danger">bg-danger</option>
+            <option value="bg-secundary">bg-secundary</option>
+            <option value="bg-light">bg-light</option>
+          </select>
+        </div>
+        <button class="btn btn-success">update</button>
+        <button class="btn btn-danger" formaction="/groups/deletegroup">delete</button>
+      </form>
+    }
 
-    </div>
+  </div>
 </div>
